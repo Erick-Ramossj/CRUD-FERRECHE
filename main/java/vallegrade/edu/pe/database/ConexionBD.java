@@ -1,30 +1,25 @@
-package vallegrade.edu.pe.database; // Corregido
+package vallegrade.edu.pe.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBD {
-    // Reemplaza con la dirección de tu servidor (Endpoint)
-    private static final String HOST = "database-1.crg8ic00cg2q.us-east-1.rds.amazonaws.com";
-    private static final String PORT = "3306";
-    private static final String DB_NAME = "tiendadb";
-
-    private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME;
-
-    // Reemplaza con tus credenciales
+    private static final String URL = "jdbc:mysql://crud-poo.crg8ic00cg2q.us-east-1.rds.amazonaws.com/bd_ferreteria";
     private static final String USER = "admin";
-    private static final String PASSWORD = "tienda_db";
+    private static final String PASSWORD = "admin_1234_";
 
-    public static Connection getConnection() {
-        Connection connection = null;
+    public static Connection conectar() {
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("¡Conexión a la BD exitosa!");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("✅ Conexión exitosa a la base de datos");
+            return conn;
+        } catch (ClassNotFoundException e) {
+            System.out.println("⚠️ Driver JDBC no encontrado, continuando sin base de datos...");
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+            System.out.println("⚠️ No se pudo conectar a la base de datos, continuando sin conexión...");
         }
-        return connection;
+        return null; // devolvemos null, pero lo manejaremos más adelante
     }
 }
