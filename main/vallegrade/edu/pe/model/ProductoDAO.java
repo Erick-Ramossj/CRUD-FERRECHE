@@ -14,7 +14,7 @@ public class ProductoDAO {
     private static final String SQL_UPDATE = "UPDATE producto SET nombre = ?, precio = ?, stock = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM producto WHERE id = ?";
 
-    // Listar todos
+    // 🔹 Listar todos los productos
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
         try (Connection con = ConexionBD.conectar();
@@ -34,5 +34,55 @@ public class ProductoDAO {
             System.err.println("Error en listar(): " + e.getMessage());
         }
         return lista;
+    }
+
+    // 🔹 Agregar producto
+    public boolean agregar(Producto p) {
+        try (Connection con = ConexionBD.conectar();
+             PreparedStatement ps = con.prepareStatement(SQL_INSERT)) {
+
+            ps.setString(1, p.getNombre());
+            ps.setDouble(2, p.getPrecio());
+            ps.setInt(3, p.getStock());
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error en agregar(): " + e.getMessage());
+            return false;
+        }
+    }
+
+    // 🔹 Actualizar producto
+    public boolean actualizar(Producto p) {
+        try (Connection con = ConexionBD.conectar();
+             PreparedStatement ps = con.prepareStatement(SQL_UPDATE)) {
+
+            ps.setString(1, p.getNombre());
+            ps.setDouble(2, p.getPrecio());
+            ps.setInt(3, p.getStock());
+            ps.setInt(4, p.getId());
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error en actualizar(): " + e.getMessage());
+            return false;
+        }
+    }
+
+    // 🔹 Eliminar producto
+    public boolean eliminar(int id) {
+        try (Connection con = ConexionBD.conectar();
+             PreparedStatement ps = con.prepareStatement(SQL_DELETE)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error en eliminar(): " + e.getMessage());
+            return false;
+        }
     }
 }
