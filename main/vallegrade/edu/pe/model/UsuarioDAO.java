@@ -1,6 +1,6 @@
 package vallegrade.edu.pe.model;
 
-import vallegrade.edu.pe.database.Conexion;
+import vallegrade.edu.pe.database.ConexionBD;
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ public class UsuarioDAO {
     public Usuario validarLogin(String username, String password) {
         String sql = "SELECT id, username, password, rol FROM usuarios WHERE username = ? AND password = ?";
         Usuario usuario = null;
-        try (Connection con = Conexion.getConexion();
+        try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, username);
@@ -30,7 +30,7 @@ public class UsuarioDAO {
     public int registrarUsuario(Usuario u) {
         String sql = "INSERT INTO usuarios (username, password, rol) VALUES (?, ?, ?)";
         int filasAfectadas = 0;
-        try (Connection con = Conexion.getConexion();
+        try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, u.getUsername());
@@ -54,7 +54,7 @@ public class UsuarioDAO {
         List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT id, username, password, rol FROM usuarios";
 
-        try (Connection con = Conexion.getConexion();
+        try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 

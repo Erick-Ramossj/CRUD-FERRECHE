@@ -4,7 +4,6 @@ package vallegrade.edu.pe.view;
 
 import vallegrade.edu.pe.controller.ProductoController;
 import vallegrade.edu.pe.model.Producto;
-import vallegrade.edu.pe.view.FrmProducto;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -41,13 +40,5 @@ public class FrmProducto extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new FrmProducto().setVisible(true));
-    }
-}
-
-public class AppLauncher {
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            new FrmProducto().setVisible(true);
-        });
     }
 }

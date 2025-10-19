@@ -1,9 +1,9 @@
 package vallegrade.edu.pe;
 
-import vallegrade.edu.pe.view.FrmCategoria;
+import vallegrade.edu.pe.view.MainMenuView;
 
 public class AppLauncher {
     public static void main(String[] args) {
-        new FrmCategoria().setVisible(true);
+        new MainMenuView().setVisible(true);
     }
 }

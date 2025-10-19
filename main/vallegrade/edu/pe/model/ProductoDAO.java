@@ -17,7 +17,7 @@ public class ProductoDAO {
     // Listar todos
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
-        try (Connection con = ConexionBD.getConexion();
+        try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(SQL_SELECT);
              ResultSet rs = ps.executeQuery()) {
 
