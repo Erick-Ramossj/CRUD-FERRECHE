@@ -5,21 +5,24 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBD {
-    private static final String URL = "jdbc:mysql://crud-poo.crg8ic00cg2q.us-east-1.rds.amazonaws.com/bd_ferreteria";
+    private static final String URL = "jdbc:mysql://database-1.crg8ic00cg2q.us-east-1.rds.amazonaws.com/ferreche";
     private static final String USER = "admin";
     private static final String PASSWORD = "admin_1234_";
 
-    public static Connection conectar() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✅ Conexión exitosa a la base de datos");
-            return conn;
-        } catch (ClassNotFoundException e) {
-            System.out.println("⚠️ Driver JDBC no encontrado, continuando sin base de datos...");
-        } catch (SQLException e) {
-            System.out.println("⚠️ No se pudo conectar a la base de datos, continuando sin conexión...");
-        }
-        return null; // devolvemos null, pero lo manejaremos más adelante
+    /**
+     * Intenta conectar a la base de datos.
+     * @return una Conexión (Connection) si tiene éxito.
+     * @throws SQLException si ocurre un error de acceso a la base de datos.
+     * @throws ClassNotFoundException si el driver JDBC no se encuentra.
+     */
+    public static Connection conectar() throws SQLException, ClassNotFoundException {
+        // Ya no capturamos las excepciones aquí, dejamos que el método que llama (DAO) se encargue.
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+        // Si la conexión fue exitosa, imprimimos esto.
+        System.out.println("✅ Conexión exitosa a la base de datos");
+        return conn;
     }
 }
