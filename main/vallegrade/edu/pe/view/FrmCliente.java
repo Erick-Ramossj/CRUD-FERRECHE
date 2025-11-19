@@ -1,4 +1,3 @@
-
 package vallegrade.edu.pe.view;
 
 import javax.swing.*;
@@ -272,19 +271,28 @@ public class FrmCliente extends JFrame {
     private JPanel crearPanelTabla() {
         JPanel panel = new JPanel(new BorderLayout(5, 5));
         panel.setBackground(new Color(240, 240, 245));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(0, 10, 10, 10),
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createTitledBorder(
-                                BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
-                                "Lista de Clientes",
-                                javax.swing.border.TitledBorder.LEFT,
-                                javax.swing.border.TitledBorder.TOP,
-                                new Font("Segoe UI", Font.BOLD, 14),
-                                new Color(70, 130, 180)
-                        ),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5)
-                )
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+
+        // Título principal
+        JLabel lblTitulo = new JLabel("CRUD GESTIONADOR DE CLIENTES", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTitulo.setForeground(new Color(70, 130, 180));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panel.add(lblTitulo, BorderLayout.NORTH);
+
+        // Panel contenedor de la tabla
+        JPanel panelTablaContenedor = new JPanel(new BorderLayout());
+        panelTablaContenedor.setBackground(new Color(240, 240, 245));
+        panelTablaContenedor.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
+                        "Lista de Clientes",
+                        javax.swing.border.TitledBorder.LEFT,
+                        javax.swing.border.TitledBorder.TOP,
+                        new Font("Segoe UI", Font.BOLD, 14),
+                        new Color(70, 130, 180)
+                ),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
 
         String[] columnas = {"ID", "Tipo", "Nombre/Razón Social", "Doc/RUC", "Correo", "Celular", "Dirección"};
@@ -307,7 +315,9 @@ public class FrmCliente extends JFrame {
 
         JScrollPane scrollTabla = new JScrollPane(tblClientes);
         scrollTabla.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
-        panel.add(scrollTabla, BorderLayout.CENTER);
+        panelTablaContenedor.add(scrollTabla, BorderLayout.CENTER);
+
+        panel.add(panelTablaContenedor, BorderLayout.CENTER);
 
         return panel;
     }
