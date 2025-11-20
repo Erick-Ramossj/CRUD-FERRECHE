@@ -10,17 +10,17 @@ import vallegrade.edu.pe.service.ClienteService;
 
 /**
  * Vista principal mejorada para la gestión de Clientes.
- * Diseño profesional con temática de ferretería ValleGrade.
+ * Diseño profesional con temática de ferretería FERRE-CHE.
  */
 public class FrmCliente extends JFrame {
 
     // Paleta de colores profesional inspirada en ferreterías
-    private static final Color COLOR_PRINCIPAL = new Color(230, 81, 0); // Naranja vibrante
+    private static final Color COLOR_PRINCIPAL = new Color(220, 53, 69); // Rojo ferretería
     private static final Color COLOR_SECUNDARIO = new Color(52, 58, 64); // Gris oscuro profesional
-    private static final Color COLOR_ACENTO = new Color(255, 167, 38); // Amarillo herramientas
+    private static final Color COLOR_ACENTO = new Color(255, 193, 7); // Amarillo herramientas
     private static final Color COLOR_EXITO = new Color(40, 167, 69); // Verde
     private static final Color COLOR_PELIGRO = new Color(220, 53, 69); // Rojo
-    private static final Color COLOR_INFO = new Color(23, 162, 184); // Azul cyan
+    private static final Color COLOR_INFO = new Color(0, 123, 255); // Azul
     private static final Color COLOR_FONDO = new Color(248, 249, 250); // Gris muy claro
     private static final Color COLOR_BLANCO = Color.WHITE;
     private static final Color COLOR_TABLA_HEADER = new Color(33, 37, 41); // Negro-gris
@@ -50,6 +50,7 @@ public class FrmCliente extends JFrame {
     public JButton btnActualizar = new JButton("✎ ACTUALIZAR");
     public JButton btnEliminar = new JButton("✖ ELIMINAR");
     public JButton btnLimpiar = new JButton("⟲ LIMPIAR");
+    public JButton btnMenu = new JButton("🏠 MENÚ PRINCIPAL");
 
     // --- Tabla ---
     public JTable tblClientes = new JTable();
@@ -68,8 +69,8 @@ public class FrmCliente extends JFrame {
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Ferretería ValleGrade - Sistema de Gestión de Clientes");
-        setSize(1200, 800);
+        setTitle("FERRE-CHE - Sistema de Gestión de Clientes");
+        setSize(1150, 720);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(COLOR_FONDO);
@@ -79,12 +80,12 @@ public class FrmCliente extends JFrame {
         add(panelHeader, BorderLayout.NORTH);
 
         // --- Panel Central con Formulario ---
-        JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
+        JPanel panelCentral = new JPanel(new BorderLayout(8, 8));
         panelCentral.setBackground(COLOR_FONDO);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(15, 15, 10, 15));
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(10, 12, 8, 12));
 
         // Panel de formularios
-        JPanel panelFormularios = new JPanel(new BorderLayout(10, 10));
+        JPanel panelFormularios = new JPanel(new BorderLayout(8, 8));
         panelFormularios.setBackground(COLOR_FONDO);
 
         // Datos Generales
@@ -120,36 +121,51 @@ public class FrmCliente extends JFrame {
     private JPanel crearPanelHeader() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(COLOR_PRINCIPAL);
-        panel.setPreferredSize(new Dimension(0, 80));
+        panel.setPreferredSize(new Dimension(0, 70));
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 3, 0, COLOR_ACENTO),
-                BorderFactory.createEmptyBorder(15, 20, 15, 20)
+                BorderFactory.createEmptyBorder(12, 20, 12, 20)
         ));
 
         // Panel izquierdo con título
-        JPanel panelIzq = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        JPanel panelIzq = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panelIzq.setOpaque(false);
 
-        JLabel lblIcono = new JLabel("🔨");
-        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
+        // Icono de ferretería
+        JLabel lblIcono = new JLabel("🔧");
+        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
         panelIzq.add(lblIcono);
 
         JPanel panelTextos = new JPanel(new GridLayout(2, 1, 0, 2));
         panelTextos.setOpaque(false);
 
-        JLabel lblTitulo = new JLabel("FERRETERÍA VALLEGRADE");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        JLabel lblTitulo = new JLabel("FERRETERÍA FERRE-CHE");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitulo.setForeground(COLOR_BLANCO);
 
         JLabel lblSubtitulo = new JLabel("Sistema de Gestión de Clientes");
-        lblSubtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblSubtitulo.setForeground(new Color(255, 255, 255, 200));
+        lblSubtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblSubtitulo.setForeground(new Color(255, 255, 255, 220));
 
         panelTextos.add(lblTitulo);
         panelTextos.add(lblSubtitulo);
         panelIzq.add(panelTextos);
 
         panel.add(panelIzq, BorderLayout.WEST);
+
+        // Panel derecho con badge
+        JPanel panelDer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelDer.setOpaque(false);
+
+        JLabel lblBadge = new JLabel("🛠️ Gestión Profesional");
+        lblBadge.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblBadge.setForeground(COLOR_BLANCO);
+        lblBadge.setOpaque(true);
+        lblBadge.setBackground(new Color(0, 0, 0, 50));
+        lblBadge.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        panelDer.add(lblBadge);
+
+        panel.add(panelDer, BorderLayout.EAST);
 
         return panel;
     }
@@ -160,7 +176,7 @@ public class FrmCliente extends JFrame {
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(COLOR_PRINCIPAL, 2, true),
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(5, 15, 10, 15),
+                        BorderFactory.createEmptyBorder(4, 12, 8, 12),
                         BorderFactory.createEmptyBorder(0, 0, 0, 0)
                 )
         ));
@@ -170,16 +186,16 @@ public class FrmCliente extends JFrame {
         gbcTitulo.gridx = 0;
         gbcTitulo.gridy = 0;
         gbcTitulo.gridwidth = 4;
-        gbcTitulo.insets = new Insets(5, 0, 10, 0);
+        gbcTitulo.insets = new Insets(4, 0, 8, 0);
         gbcTitulo.anchor = GridBagConstraints.WEST;
 
         JLabel lblTituloPanel = new JLabel("📋 DATOS GENERALES DEL CLIENTE");
-        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTituloPanel.setForeground(COLOR_PRINCIPAL);
         panel.add(lblTituloPanel, gbcTitulo);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 8, 6, 8);
+        gbc.insets = new Insets(5, 6, 5, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Fila 1: ID y Tipo Cliente
@@ -214,7 +230,7 @@ public class FrmCliente extends JFrame {
         gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0;
         panel.add(crearLabel("🔐 Contraseña:"), gbc);
         gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtContrasena);
+        estilizarPasswordField(txtContrasena);
         panel.add(txtContrasena, gbc);
 
         return panel;
@@ -226,7 +242,7 @@ public class FrmCliente extends JFrame {
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(COLOR_EXITO, 2, true),
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(5, 15, 10, 15),
+                        BorderFactory.createEmptyBorder(4, 12, 8, 12),
                         BorderFactory.createEmptyBorder(0, 0, 0, 0)
                 )
         ));
@@ -236,16 +252,16 @@ public class FrmCliente extends JFrame {
         gbcTitulo.gridx = 0;
         gbcTitulo.gridy = 0;
         gbcTitulo.gridwidth = 4;
-        gbcTitulo.insets = new Insets(5, 0, 10, 0);
+        gbcTitulo.insets = new Insets(4, 0, 8, 0);
         gbcTitulo.anchor = GridBagConstraints.WEST;
 
         JLabel lblTituloPanel = new JLabel("👤 INFORMACIÓN PERSONAL");
-        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTituloPanel.setForeground(COLOR_EXITO);
         panel.add(lblTituloPanel, gbcTitulo);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 8, 6, 8);
+        gbc.insets = new Insets(5, 6, 5, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Fila 1: Nombre y Apellidos
@@ -296,7 +312,7 @@ public class FrmCliente extends JFrame {
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(COLOR_INFO, 2, true),
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(5, 15, 10, 15),
+                        BorderFactory.createEmptyBorder(4, 12, 8, 12),
                         BorderFactory.createEmptyBorder(0, 0, 0, 0)
                 )
         ));
@@ -306,16 +322,16 @@ public class FrmCliente extends JFrame {
         gbcTitulo.gridx = 0;
         gbcTitulo.gridy = 0;
         gbcTitulo.gridwidth = 4;
-        gbcTitulo.insets = new Insets(5, 0, 10, 0);
+        gbcTitulo.insets = new Insets(4, 0, 8, 0);
         gbcTitulo.anchor = GridBagConstraints.WEST;
 
         JLabel lblTituloPanel = new JLabel("🏢 INFORMACIÓN EMPRESARIAL");
-        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTituloPanel.setForeground(COLOR_INFO);
         panel.add(lblTituloPanel, gbcTitulo);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 8, 6, 8);
+        gbc.insets = new Insets(5, 6, 5, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Fila 1: Razón Social y Tipo Empresa
@@ -353,9 +369,9 @@ public class FrmCliente extends JFrame {
 
         // Título de la sección
         JLabel lblTitulo = new JLabel("📊 REGISTRO DE CLIENTES", SwingConstants.LEFT);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblTitulo.setForeground(COLOR_SECUNDARIO);
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         panel.add(lblTitulo, BorderLayout.NORTH);
 
         // Configurar tabla
@@ -368,19 +384,21 @@ public class FrmCliente extends JFrame {
         };
 
         tblClientes.setModel(modeloTabla);
-        tblClientes.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        tblClientes.setRowHeight(32);
+        tblClientes.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        tblClientes.setRowHeight(28);
         tblClientes.setShowGrid(true);
         tblClientes.setGridColor(new Color(222, 226, 230));
         tblClientes.setIntercellSpacing(new Dimension(1, 1));
         tblClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblClientes.setSelectionBackground(new Color(255, 193, 7, 120));
+        tblClientes.setSelectionForeground(COLOR_SECUNDARIO);
 
         // Estilizar header
         JTableHeader header = tblClientes.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 13));
         header.setBackground(COLOR_TABLA_HEADER);
         header.setForeground(COLOR_BLANCO);
-        header.setPreferredSize(new Dimension(header.getWidth(), 40));
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, COLOR_PRINCIPAL));
 
         // Centrar contenido de celdas
@@ -397,11 +415,13 @@ public class FrmCliente extends JFrame {
                                                            boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (isSelected) {
-                    c.setBackground(new Color(255, 193, 7, 100));
+                    c.setBackground(new Color(255, 193, 7, 120));
                     c.setForeground(COLOR_SECUNDARIO);
+                    setFont(getFont().deriveFont(Font.BOLD));
                 } else {
                     c.setBackground(row % 2 == 0 ? COLOR_BLANCO : new Color(248, 249, 250));
                     c.setForeground(COLOR_SECUNDARIO);
+                    setFont(new Font("Segoe UI", Font.PLAIN, 12));
                 }
                 ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
                 return c;
@@ -409,7 +429,10 @@ public class FrmCliente extends JFrame {
         });
 
         JScrollPane scrollPane = new JScrollPane(tblClientes);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(206, 212, 218), 1));
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(206, 212, 218), 2),
+                BorderFactory.createEmptyBorder(0, 0, 0, 0)
+        ));
         scrollPane.getViewport().setBackground(COLOR_BLANCO);
 
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -418,20 +441,22 @@ public class FrmCliente extends JFrame {
     }
 
     private JPanel crearPanelBotones() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 12));
         panel.setBackground(COLOR_BLANCO);
         panel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(222, 226, 230)));
 
         // Estilizar botones
         estilizarBoton(btnAgregar, COLOR_EXITO, new Color(33, 136, 56));
-        estilizarBoton(btnActualizar, COLOR_INFO, new Color(19, 132, 150));
+        estilizarBoton(btnActualizar, COLOR_INFO, new Color(0, 105, 217));
         estilizarBoton(btnEliminar, COLOR_PELIGRO, new Color(200, 35, 51));
         estilizarBoton(btnLimpiar, COLOR_SECUNDARIO, new Color(40, 45, 50));
+        estilizarBoton(btnMenu, new Color(108, 117, 125), new Color(73, 80, 87));
 
         panel.add(btnAgregar);
         panel.add(btnActualizar);
         panel.add(btnEliminar);
         panel.add(btnLimpiar);
+        panel.add(btnMenu);
 
         return panel;
     }
@@ -444,10 +469,10 @@ public class FrmCliente extends JFrame {
     }
 
     private void estilizarTextField(JTextField textField) {
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                BorderFactory.createEmptyBorder(6, 10, 6, 10)
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         textField.setBackground(COLOR_BLANCO);
 
@@ -456,13 +481,38 @@ public class FrmCliente extends JFrame {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 textField.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(COLOR_PRINCIPAL, 2),
-                        BorderFactory.createEmptyBorder(5, 9, 5, 9)
+                        BorderFactory.createEmptyBorder(4, 9, 4, 9)
                 ));
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 textField.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                        BorderFactory.createEmptyBorder(6, 10, 6, 10)
+                        BorderFactory.createEmptyBorder(5, 10, 5, 10)
+                ));
+            }
+        });
+    }
+
+    private void estilizarPasswordField(JPasswordField passwordField) {
+        passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        passwordField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        passwordField.setBackground(COLOR_BLANCO);
+
+        // Efecto focus
+        passwordField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                passwordField.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(COLOR_PRINCIPAL, 2),
+                        BorderFactory.createEmptyBorder(4, 9, 4, 9)
+                ));
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                passwordField.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
+                        BorderFactory.createEmptyBorder(5, 10, 5, 10)
                 ));
             }
         });
@@ -473,18 +523,18 @@ public class FrmCliente extends JFrame {
         comboBox.setBackground(COLOR_BLANCO);
         comboBox.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                BorderFactory.createEmptyBorder(3, 8, 3, 8)
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)
         ));
         comboBox.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     private void estilizarBoton(JButton boton, Color color, Color colorHover) {
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 12));
         boton.setBackground(color);
         boton.setForeground(COLOR_BLANCO);
         boton.setFocusPainted(false);
         boton.setBorderPainted(false);
-        boton.setBorder(BorderFactory.createEmptyBorder(12, 30, 12, 30));
+        boton.setBorder(BorderFactory.createEmptyBorder(10, 24, 10, 24));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         boton.setOpaque(true);
 
@@ -505,6 +555,12 @@ public class FrmCliente extends JFrame {
             String tipo = (String) cmbTipoCliente.getSelectedItem();
             cardLayout.show(panelDinamico, tipo);
             limpiarCamposEspecificos();
+        });
+
+        // Evento para volver al menú principal
+        btnMenu.addActionListener(e -> {
+            this.dispose();
+            new MainMenuView().setVisible(true);
         });
     }
 
