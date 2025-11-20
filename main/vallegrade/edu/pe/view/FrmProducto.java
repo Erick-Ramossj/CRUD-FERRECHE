@@ -4,13 +4,15 @@ import vallegrade.edu.pe.controller.ProductoController;
 import vallegrade.edu.pe.model.Producto;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 
 public class FrmProducto extends JFrame {
 
-    // Controlador SIN parámetros (NO GENERA ERROR)
     private ProductoController controller = new ProductoController();
 
     private JTextField txtId, txtNombre, txtPrecio, txtDescuento, txtImagen;
@@ -18,11 +20,21 @@ public class FrmProducto extends JFrame {
     private JTable tabla;
     private DefaultTableModel modelo;
 
+    // Paleta de colores profesional
+    private final Color COLOR_PRIMARY = new Color(41, 128, 185);
+    private final Color COLOR_SUCCESS = new Color(39, 174, 96);
+    private final Color COLOR_DANGER = new Color(231, 76, 60);
+    private final Color COLOR_WARNING = new Color(243, 156, 18);
+    private final Color COLOR_SECONDARY = new Color(52, 73, 94);
+    private final Color COLOR_BACKGROUND = new Color(236, 240, 241);
+    private final Color COLOR_WHITE = Color.WHITE;
+
     public FrmProducto() {
-        setTitle("Gestión de Productos");
-        setSize(900, 600);
+        setTitle("Sistema de Gestión de Productos");
+        setSize(1100, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setBackground(COLOR_BACKGROUND);
 
         initComponents();
         cargarCombos();
@@ -30,94 +42,227 @@ public class FrmProducto extends JFrame {
     }
 
     private void initComponents() {
-        JPanel panel = new JPanel(new BorderLayout());
-        add(panel);
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBackground(COLOR_BACKGROUND);
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        add(mainPanel);
 
-        // ---------------- PANEL SUPERIOR (FORMULARIO) ----------------
-        JPanel form = new JPanel(new GridLayout(4, 4, 10, 10));
-        form.setBorder(BorderFactory.createTitledBorder("Datos del Producto"));
+        // ------------------- TÍTULO -------------------
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(COLOR_PRIMARY);
+        headerPanel.setPreferredSize(new Dimension(0, 70));
+        JLabel lblTitulo = new JLabel("GESTIÓN DE PRODUCTOS");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblTitulo.setForeground(COLOR_WHITE);
+        headerPanel.add(lblTitulo);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        txtId = new JTextField();
-        txtId.setEditable(false);
+        // ------------------- PANEL FORMULARIO -------------------
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(COLOR_WHITE);
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                new EmptyBorder(20, 25, 20, 25)
+        ));
 
-        txtNombre = new JTextField();
-        txtPrecio = new JTextField();
-        txtDescuento = new JTextField();
-        txtImagen = new JTextField();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 8, 8, 8);
 
-        cboGenero = new JComboBox<>();
-        cboColor = new JComboBox<>();
-        cboRubro = new JComboBox<>();
+        txtId = crearTextField(false);
+        txtNombre = crearTextField(true);
+        txtPrecio = crearTextField(true);
+        txtDescuento = crearTextField(true);
+        txtImagen = crearTextField(true);
 
-        form.add(new JLabel("ID:")); form.add(txtId);
-        form.add(new JLabel("Nombre:")); form.add(txtNombre);
-        form.add(new JLabel("Precio:")); form.add(txtPrecio);
-        form.add(new JLabel("Oferta:")); form.add(txtDescuento);
-        form.add(new JLabel("Imagen (ruta):")); form.add(txtImagen);
-        form.add(new JLabel("Género:")); form.add(cboGenero);
-        form.add(new JLabel("Color:")); form.add(cboColor);
-        form.add(new JLabel("Rubro:")); form.add(cboRubro);
+        cboGenero = crearComboBox();
+        cboColor = crearComboBox();
+        cboRubro = crearComboBox();
 
-        panel.add(form, BorderLayout.NORTH);
+        // Fila 1
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("ID:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 0.8;
+        formPanel.add(txtId, gbc);
 
-        // ---------------- PANEL CENTRAL (TABLA) ----------------
+        gbc.gridx = 2; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Nombre:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 0.8;
+        formPanel.add(txtNombre, gbc);
+
+        // Fila 2
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Precio:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 0.8;
+        formPanel.add(txtPrecio, gbc);
+
+        gbc.gridx = 2; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Oferta:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 0.8;
+        formPanel.add(txtDescuento, gbc);
+
+        // Fila 3
+        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Género:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 0.8;
+        formPanel.add(cboGenero, gbc);
+
+        gbc.gridx = 2; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Color:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 0.8;
+        formPanel.add(cboColor, gbc);
+
+        // Fila 4
+        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Rubro:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 0.8;
+        formPanel.add(cboRubro, gbc);
+
+        gbc.gridx = 2; gbc.weightx = 0.2;
+        formPanel.add(crearLabel("Imagen:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 0.8;
+        formPanel.add(txtImagen, gbc);
+
+        mainPanel.add(formPanel, BorderLayout.NORTH);
+
+        // ------------------- TABLA -------------------
         modelo = new DefaultTableModel(
                 new String[]{"ID", "Nombre", "Precio", "Oferta", "Imagen", "Género", "Color", "Rubro"}, 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         tabla = new JTable(modelo);
+        tabla.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tabla.setRowHeight(30);
+        tabla.setSelectionBackground(new Color(52, 152, 219));
+        tabla.setSelectionForeground(COLOR_WHITE);
+        tabla.setGridColor(new Color(189, 195, 199));
+        tabla.setShowGrid(true);
+        tabla.setIntercellSpacing(new Dimension(1, 1));
+
+        // Estilo del encabezado
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setBackground(COLOR_BACKGROUND);
+        header.setForeground(COLOR_PRIMARY);
+        header.setPreferredSize(new Dimension(header.getWidth(), 40));
+
+        // Centrar contenido de celdas
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < tabla.getColumnCount(); i++) {
+            tabla.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
 
         tabla.getSelectionModel().addListSelectionListener(e -> cargarDatosSeleccionados());
 
-        panel.add(new JScrollPane(tabla), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(tabla);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(189, 195, 199), 1));
+        scrollPane.getViewport().setBackground(COLOR_WHITE);
 
-        // ---------------- PANEL INFERIOR (BOTONES) ----------------
-        JPanel botones = new JPanel();
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JButton btnAgregar = new JButton("Agregar");
-        JButton btnActualizar = new JButton("Actualizar");
-        JButton btnEliminar = new JButton("Eliminar");
-        JButton btnEditar = new JButton("Editar");
-        JButton btnMenu = new JButton("Volver al Menú");
+        // ------------------- BOTONES -------------------
+        JPanel botonesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        botonesPanel.setBackground(COLOR_BACKGROUND);
 
+        JButton btnAgregar = crearBoton("Agregar", COLOR_SUCCESS);
+        JButton btnEditar = crearBoton("Editar", COLOR_WARNING);
+        JButton btnActualizar = crearBoton("Actualizar", COLOR_PRIMARY);
+        JButton btnEliminar = crearBoton("Eliminar", COLOR_DANGER);
+        JButton btnMenu = crearBoton("Volver al Menú", COLOR_SECONDARY);
 
-        botones.add(btnAgregar);
-        botones.add(btnActualizar);
-        botones.add(btnEliminar);
-        botones.add(btnEditar);
-        botones.add(btnMenu);
+        botonesPanel.add(btnAgregar);
+        botonesPanel.add(btnEditar);
+        botonesPanel.add(btnActualizar);
+        botonesPanel.add(btnEliminar);
+        botonesPanel.add(btnMenu);
 
-
-        panel.add(botones, BorderLayout.SOUTH);
+        mainPanel.add(botonesPanel, BorderLayout.SOUTH);
 
         // EVENTOS
         btnAgregar.addActionListener(e -> agregarProducto());
         btnActualizar.addActionListener(e -> actualizarProducto());
         btnEliminar.addActionListener(e -> eliminarProducto());
         btnEditar.addActionListener(e -> habilitarEdicion());
-
         btnMenu.addActionListener(e -> {
-            this.dispose(); // cierra FrmProducto
-            new MainMenuView().setVisible(true); // vuelve al menú principal
+            this.dispose();
+            new MainMenuView().setVisible(true);
         });
-
     }
 
-    // ------------------- LOGICA ---------------------
+    // ------------------- MÉTODOS AUXILIARES DE DISEÑO -------------------
+
+    private JLabel crearLabel(String texto) {
+        JLabel label = new JLabel(texto);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setForeground(COLOR_SECONDARY);
+        return label;
+    }
+
+    private JTextField crearTextField(boolean editable) {
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setPreferredSize(new Dimension(200, 35));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                new EmptyBorder(5, 10, 5, 10)
+        ));
+        textField.setEditable(editable);
+        if (!editable) {
+            textField.setBackground(new Color(236, 240, 241));
+        }
+        return textField;
+    }
+
+    private JComboBox<String> crearComboBox() {
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        comboBox.setPreferredSize(new Dimension(200, 35));
+        comboBox.setBackground(COLOR_WHITE);
+        return comboBox;
+    }
+
+    private JButton crearBoton(String texto, Color color) {
+        JButton boton = new JButton(texto);
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        boton.setBackground(color);
+        boton.setForeground(COLOR_WHITE);
+        boton.setFocusPainted(false);
+        boton.setBorderPainted(false);
+        boton.setPreferredSize(new Dimension(150, 40));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Efecto hover
+        boton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                boton.setBackground(color.darker());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                boton.setBackground(color);
+            }
+        });
+
+        return boton;
+    }
+
+    // ------------------- LÓGICA (SIN CAMBIOS) -------------------
 
     private void cargarCombos() {
-        // Genero
         cboGenero.addItem("Unisex");
         cboGenero.addItem("Hombre");
         cboGenero.addItem("Mujer");
 
-        // Color
         cboColor.addItem("Amarillo");
         cboColor.addItem("Anaranjado");
         cboColor.addItem("Blanco");
         cboColor.addItem("Negro");
         cboColor.addItem("Rojo");
 
-        // Rubro
         cboRubro.addItem("Construcción");
         cboRubro.addItem("Seguridad Industrial");
         cboRubro.addItem("Salud");
@@ -230,5 +375,6 @@ public class FrmProducto extends JFrame {
 
         cboGenero.setSelectedIndex(0);
         cboColor.setSelectedIndex(0);
-        cboRubro.setSelectedIndex(0);}
+        cboRubro.setSelectedIndex(0);
+    }
 }
