@@ -13,7 +13,7 @@ public class FrmCliente extends JFrame {
 
     // === Componentes principales ===
     public JTable tblClientes;
-    public JButton btnAgregar, btnActualizar, btnEliminar, btnLimpiar, btnListar;
+    public JButton btnAgregar, btnActualizar, btnEliminar, btnLimpiar, btnListar, btnDirecciones;
     public JComboBox<String> cmbTipoCliente;
 
     // === Campos comunes ===
@@ -225,12 +225,14 @@ public class FrmCliente extends JFrame {
         btnEliminar = crearBoton("Eliminar", COLOR_PELIGRO);
         btnLimpiar = crearBoton("Limpiar", COLOR_ADVERTENCIA);
         btnListar = crearBoton("Listar", new Color(149, 165, 166));
+        btnDirecciones = crearBoton("Direcciones", new Color(155, 89, 182));
 
         panelBotones.add(btnAgregar);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnListar);
+        panelBotones.add(btnDirecciones);
 
         add(panelBotones, BorderLayout.SOUTH);
     }
@@ -334,6 +336,9 @@ public class FrmCliente extends JFrame {
 
         // === BOTÓN LIMPIAR ===
         btnLimpiar.addActionListener(e -> limpiarCampos());
+
+        // === BOTÓN DIRECCIONES ===
+        btnDirecciones.addActionListener(e -> abrirVentanaDirecciones());
     }
 
     private void cargarTabla() {
@@ -374,5 +379,24 @@ public class FrmCliente extends JFrame {
         txtTipoEmpresa.setText("");
         txtRuc.setText("");
     }
+
+    private void abrirVentanaDirecciones() {
+        int filaSeleccionada = tblClientes.getSelectedRow();
+        
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Por favor, selecciona un cliente de la tabla.", 
+                "Advertencia", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Obtener el ID del cliente de la primera columna (índice 0)
+        int idCliente = (int) tblClientes.getValueAt(filaSeleccionada, 0);
+        
+        FrmDireccion frmDireccion = new FrmDireccion(this, idCliente);
+        frmDireccion.setVisible(true);
+    }
 }
+
 
