@@ -2,594 +2,377 @@ package vallegrade.edu.pe.view;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.border.*;
 import java.awt.*;
-import vallegrade.edu.pe.controller.ClienteController;
+import vallegrade.edu.pe.model.Cliente;
 import vallegrade.edu.pe.service.ClienteService;
+import java.util.List;
 
-/**
- * Vista principal mejorada para la gestión de Clientes.
- * Diseño profesional con temática de ferretería FERRE-CHE.
- */
 public class FrmCliente extends JFrame {
 
-    // Paleta de colores profesional inspirada en ferreterías
-    private static final Color COLOR_PRINCIPAL = new Color(220, 53, 69); // Rojo ferretería
-    private static final Color COLOR_SECUNDARIO = new Color(52, 58, 64); // Gris oscuro profesional
-    private static final Color COLOR_ACENTO = new Color(255, 193, 7); // Amarillo herramientas
-    private static final Color COLOR_EXITO = new Color(40, 167, 69); // Verde
-    private static final Color COLOR_PELIGRO = new Color(220, 53, 69); // Rojo
-    private static final Color COLOR_INFO = new Color(0, 123, 255); // Azul
-    private static final Color COLOR_FONDO = new Color(248, 249, 250); // Gris muy claro
-    private static final Color COLOR_BLANCO = Color.WHITE;
-    private static final Color COLOR_TABLA_HEADER = new Color(33, 37, 41); // Negro-gris
+    // === Componentes principales ===
+    public JTable tblClientes;
+    public JButton btnAgregar, btnActualizar, btnEliminar, btnLimpiar, btnListar;
+    public JComboBox<String> cmbTipoCliente;
 
-    // --- Componentes del Formulario ---
-    public JTextField txtId = new JTextField(10);
-    public JComboBox<String> cmbTipoCliente = new JComboBox<>(new String[]{"persona", "empresa"});
-    public JTextField txtCorreo = new JTextField(20);
-    public JTextField txtCelular = new JTextField(15);
-    public JPasswordField txtContrasena = new JPasswordField(20);
+    // === Campos comunes ===
+    public JTextField txtId, txtCorreo, txtCelular;
+    public JPasswordField txtContrasena;
 
-    // Campos Persona
-    public JTextField txtNombre = new JTextField(20);
-    public JTextField txtApellidos = new JTextField(20);
-    public JTextField txtDireccion = new JTextField(20);
-    public JTextField txtTipoDoc = new JTextField(10);
-    public JTextField txtNumDoc = new JTextField(15);
-    public JTextField txtProfesion = new JTextField(20);
+    // === Campos persona ===
+    public JTextField txtNombre, txtApellidos, txtDireccion, txtTipoDoc, txtNumDoc, txtProfesion;
 
-    // Campos Empresa
-    public JTextField txtRazonSocial = new JTextField(20);
-    public JTextField txtTipoEmpresa = new JTextField(20);
-    public JTextField txtRuc = new JTextField(15);
+    // === Campos empresa ===
+    public JTextField txtRazonSocial, txtTipoEmpresa, txtRuc;
 
-    // --- Botones con iconos mejorados ---
-    public JButton btnAgregar = new JButton("✚ AGREGAR");
-    public JButton btnActualizar = new JButton("✎ ACTUALIZAR");
-    public JButton btnEliminar = new JButton("✖ ELIMINAR");
-    public JButton btnLimpiar = new JButton("⟲ LIMPIAR");
-    public JButton btnMenu = new JButton("🏠 MENÚ PRINCIPAL");
-
-    // --- Tabla ---
-    public JTable tblClientes = new JTable();
-    public DefaultTableModel modeloTabla;
-
-    // Paneles dinámicos
-    private JPanel panelPersona;
-    private JPanel panelEmpresa;
-    private CardLayout cardLayout;
+    // Panel dinámico
     private JPanel panelDinamico;
+    private CardLayout cardLayout;
+
+    private ClienteService clienteService = new ClienteService();
+
+    // === COLORES DEL TEMA ===
+    private final Color COLOR_PRIMARIO = new Color(41, 128, 185);
+    private final Color COLOR_SECUNDARIO = new Color(52, 73, 94);
+    private final Color COLOR_FONDO = new Color(236, 240, 241);
+    private final Color COLOR_PANEL = new Color(255, 255, 255);
+    private final Color COLOR_TEXTO = new Color(44, 62, 80);
+    private final Color COLOR_ACENTO = new Color(26, 188, 156);
+    private final Color COLOR_PELIGRO = new Color(231, 76, 60);
+    private final Color COLOR_ADVERTENCIA = new Color(241, 196, 15);
+
+    // === FUENTES ===
+    private final Font FUENTE_TITULO = new Font("Segoe UI", Font.BOLD, 14);
+    private final Font FUENTE_LABEL = new Font("Segoe UI", Font.PLAIN, 12);
+    private final Font FUENTE_CAMPO = new Font("Segoe UI", Font.PLAIN, 13);
+    private final Font FUENTE_BOTON = new Font("Segoe UI", Font.BOLD, 12);
+    private final Font FUENTE_TABLA = new Font("Segoe UI", Font.PLAIN, 12);
 
     public FrmCliente() {
+        setTitle("Gestión de Clientes");
+        setSize(1000, 700);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout(0, 0));
+        getContentPane().setBackground(COLOR_FONDO);
+
         initComponents();
         configurarEventos();
     }
 
     private void initComponents() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("FERRE-CHE - Sistema de Gestión de Clientes");
-        setSize(1150, 720);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout(0, 0));
-        getContentPane().setBackground(COLOR_FONDO);
 
-        // --- Panel Superior con Header ---
-        JPanel panelHeader = crearPanelHeader();
-        add(panelHeader, BorderLayout.NORTH);
+        // ======== PANEL SUPERIOR (FORMULARIO) ========
+        JPanel panelForm = new JPanel(new GridLayout(0, 4, 10, 8));
+        panelForm.setBackground(COLOR_PANEL);
+        panelForm.setBorder(crearBordeTitulado("Datos del Cliente"));
 
-        // --- Panel Central con Formulario ---
-        JPanel panelCentral = new JPanel(new BorderLayout(8, 8));
-        panelCentral.setBackground(COLOR_FONDO);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(10, 12, 8, 12));
+        txtId = new JTextField();
+        txtId.setEditable(false);
+        txtId.setBackground(new Color(245, 245, 245));
 
-        // Panel de formularios
-        JPanel panelFormularios = new JPanel(new BorderLayout(8, 8));
-        panelFormularios.setBackground(COLOR_FONDO);
+        cmbTipoCliente = new JComboBox<>(new String[]{"persona", "empresa"});
+        txtCorreo = new JTextField();
+        txtCelular = new JTextField();
+        txtContrasena = new JPasswordField();
 
-        // Datos Generales
-        JPanel panelDatosGenerales = crearPanelDatosGenerales();
+        // Aplicar estilo a campos comunes
+        estilizarCampo(txtId);
+        estilizarComboBox(cmbTipoCliente);
+        estilizarCampo(txtCorreo);
+        estilizarCampo(txtCelular);
+        estilizarCampo(txtContrasena);
 
-        // Panel Dinámico (Persona/Empresa)
+        panelForm.add(crearLabel("ID:"));
+        panelForm.add(txtId);
+        panelForm.add(crearLabel("Tipo Cliente:"));
+        panelForm.add(cmbTipoCliente);
+        panelForm.add(crearLabel("Correo:"));
+        panelForm.add(txtCorreo);
+        panelForm.add(crearLabel("Celular:"));
+        panelForm.add(txtCelular);
+        panelForm.add(crearLabel("Contraseña:"));
+        panelForm.add(txtContrasena);
+
+        // ======== PANEL PERSONA ========
+        JPanel panelPersona = new JPanel(new GridBagLayout());
+        panelPersona.setBackground(COLOR_PANEL);
+        panelPersona.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+
+        txtNombre = new JTextField();
+        txtApellidos = new JTextField();
+        txtDireccion = new JTextField();
+        txtTipoDoc = new JTextField();
+        txtNumDoc = new JTextField();
+        txtProfesion = new JTextField();
+
+        // Aplicar estilo a campos persona
+        estilizarCampo(txtNombre);
+        estilizarCampo(txtApellidos);
+        estilizarCampo(txtDireccion);
+        estilizarCampo(txtTipoDoc);
+        estilizarCampo(txtNumDoc);
+        estilizarCampo(txtProfesion);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(4, 5, 4, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Fila 1
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
+        panelPersona.add(crearLabel("Nombre:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 1;
+        panelPersona.add(txtNombre, gbc);
+        gbc.gridx = 2; gbc.weightx = 0;
+        panelPersona.add(crearLabel("Apellidos:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 1;
+        panelPersona.add(txtApellidos, gbc);
+        gbc.gridx = 4; gbc.weightx = 0;
+        panelPersona.add(crearLabel("Tipo Doc.:"), gbc);
+        gbc.gridx = 5; gbc.weightx = 0.7;
+        panelPersona.add(txtTipoDoc, gbc);
+
+        // Fila 2
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        panelPersona.add(crearLabel("N° Doc.:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 1;
+        panelPersona.add(txtNumDoc, gbc);
+        gbc.gridx = 2; gbc.weightx = 0;
+        panelPersona.add(crearLabel("Profesión:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 1;
+        panelPersona.add(txtProfesion, gbc);
+        gbc.gridx = 4; gbc.weightx = 0;
+        panelPersona.add(crearLabel("Dirección:"), gbc);
+        gbc.gridx = 5; gbc.weightx = 0.7;
+        panelPersona.add(txtDireccion, gbc);
+
+        // ======== PANEL EMPRESA ========
+        JPanel panelEmpresa = new JPanel(new GridLayout(0, 4, 10, 6));
+        panelEmpresa.setBackground(COLOR_PANEL);
+        panelEmpresa.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        txtRazonSocial = new JTextField();
+        txtTipoEmpresa = new JTextField();
+        txtRuc = new JTextField();
+
+        // Aplicar estilo a campos empresa
+        estilizarCampo(txtRazonSocial);
+        estilizarCampo(txtTipoEmpresa);
+        estilizarCampo(txtRuc);
+
+        panelEmpresa.add(crearLabel("Razón Social:"));
+        panelEmpresa.add(txtRazonSocial);
+        panelEmpresa.add(crearLabel("Tipo Empresa:"));
+        panelEmpresa.add(txtTipoEmpresa);
+        panelEmpresa.add(crearLabel("RUC:"));
+        panelEmpresa.add(txtRuc);
+
+        // ======== CARDLAYOUT (dinámico) ========
+        panelDinamico = new JPanel();
         cardLayout = new CardLayout();
-        panelDinamico = new JPanel(cardLayout);
-        panelDinamico.setBackground(COLOR_FONDO);
-
-        panelPersona = crearPanelPersona();
-        panelEmpresa = crearPanelEmpresa();
-
+        panelDinamico.setLayout(cardLayout);
+        panelDinamico.setBackground(COLOR_PANEL);
+        panelDinamico.setBorder(crearBordeTitulado("Información Específica"));
+        panelDinamico.setPreferredSize(new Dimension(0, 120));
         panelDinamico.add(panelPersona, "persona");
         panelDinamico.add(panelEmpresa, "empresa");
 
-        panelFormularios.add(panelDatosGenerales, BorderLayout.NORTH);
-        panelFormularios.add(panelDinamico, BorderLayout.CENTER);
+        JPanel panelCentro = new JPanel(new BorderLayout(0, 10));
+        panelCentro.setBackground(COLOR_FONDO);
+        panelCentro.setBorder(BorderFactory.createEmptyBorder(10, 15, 5, 15));
+        panelCentro.add(panelForm, BorderLayout.NORTH);
+        panelCentro.add(panelDinamico, BorderLayout.CENTER);
 
-        panelCentral.add(panelFormularios, BorderLayout.NORTH);
+        // Panel contenedor superior con tamaño fijo
+        JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setBackground(COLOR_FONDO);
+        panelSuperior.setPreferredSize(new Dimension(0, 280));
+        panelSuperior.add(panelCentro, BorderLayout.CENTER);
 
-        // Tabla
-        JPanel panelTabla = crearPanelTabla();
-        panelCentral.add(panelTabla, BorderLayout.CENTER);
+        add(panelSuperior, BorderLayout.NORTH);
 
-        add(panelCentral, BorderLayout.CENTER);
+        // ======== TABLA (LISTADO) ========
+        tblClientes = new JTable();
+        tblClientes.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                        "ID", "Tipo", "Nombre / Razón Social", "Documento / RUC", "Correo", "Celular", "Dirección"
+                }
+        ));
+        estilizarTabla(tblClientes);
 
-        // --- Panel de Botones ---
-        JPanel panelBotones = crearPanelBotones();
+        JScrollPane scroll = new JScrollPane(tblClientes);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getViewport().setBackground(COLOR_PANEL);
+
+        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setBackground(COLOR_FONDO);
+        panelTabla.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(0, 15, 10, 15),
+                crearBordeTitulado("Listado de Clientes")
+        ));
+        panelTabla.add(scroll, BorderLayout.CENTER);
+
+        add(panelTabla, BorderLayout.CENTER);
+
+        // ======== BOTONES ========
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 10));
+        panelBotones.setBackground(COLOR_SECUNDARIO);
+
+        btnAgregar = crearBoton("Agregar", COLOR_ACENTO);
+        btnActualizar = crearBoton("Actualizar", COLOR_PRIMARIO);
+        btnEliminar = crearBoton("Eliminar", COLOR_PELIGRO);
+        btnLimpiar = crearBoton("Limpiar", COLOR_ADVERTENCIA);
+        btnListar = crearBoton("Listar", new Color(149, 165, 166));
+
+        panelBotones.add(btnAgregar);
+        panelBotones.add(btnActualizar);
+        panelBotones.add(btnEliminar);
+        panelBotones.add(btnLimpiar);
+        panelBotones.add(btnListar);
+
         add(panelBotones, BorderLayout.SOUTH);
     }
 
-    private JPanel crearPanelHeader() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(COLOR_PRINCIPAL);
-        panel.setPreferredSize(new Dimension(0, 70));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 3, 0, COLOR_ACENTO),
-                BorderFactory.createEmptyBorder(12, 20, 12, 20)
-        ));
-
-        // Panel izquierdo con título
-        JPanel panelIzq = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
-        panelIzq.setOpaque(false);
-
-        // Icono de ferretería
-        JLabel lblIcono = new JLabel("🔧");
-        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
-        panelIzq.add(lblIcono);
-
-        JPanel panelTextos = new JPanel(new GridLayout(2, 1, 0, 2));
-        panelTextos.setOpaque(false);
-
-        JLabel lblTitulo = new JLabel("FERRETERÍA FERRE-CHE");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(COLOR_BLANCO);
-
-        JLabel lblSubtitulo = new JLabel("Sistema de Gestión de Clientes");
-        lblSubtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblSubtitulo.setForeground(new Color(255, 255, 255, 220));
-
-        panelTextos.add(lblTitulo);
-        panelTextos.add(lblSubtitulo);
-        panelIzq.add(panelTextos);
-
-        panel.add(panelIzq, BorderLayout.WEST);
-
-        // Panel derecho con badge
-        JPanel panelDer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelDer.setOpaque(false);
-
-        JLabel lblBadge = new JLabel("🛠️ Gestión Profesional");
-        lblBadge.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblBadge.setForeground(COLOR_BLANCO);
-        lblBadge.setOpaque(true);
-        lblBadge.setBackground(new Color(0, 0, 0, 50));
-        lblBadge.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-        panelDer.add(lblBadge);
-
-        panel.add(panelDer, BorderLayout.EAST);
-
-        return panel;
-    }
-
-    private JPanel crearPanelDatosGenerales() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(COLOR_BLANCO);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(COLOR_PRINCIPAL, 2, true),
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(4, 12, 8, 12),
-                        BorderFactory.createEmptyBorder(0, 0, 0, 0)
-                )
-        ));
-
-        // Título del panel
-        GridBagConstraints gbcTitulo = new GridBagConstraints();
-        gbcTitulo.gridx = 0;
-        gbcTitulo.gridy = 0;
-        gbcTitulo.gridwidth = 4;
-        gbcTitulo.insets = new Insets(4, 0, 8, 0);
-        gbcTitulo.anchor = GridBagConstraints.WEST;
-
-        JLabel lblTituloPanel = new JLabel("📋 DATOS GENERALES DEL CLIENTE");
-        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblTituloPanel.setForeground(COLOR_PRINCIPAL);
-        panel.add(lblTituloPanel, gbcTitulo);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 6, 5, 6);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Fila 1: ID y Tipo Cliente
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0;
-        panel.add(crearLabel("ID Cliente:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        txtId.setEditable(false);
-        txtId.setBackground(new Color(233, 236, 239));
-        estilizarTextField(txtId);
-        panel.add(txtId, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("Tipo de Cliente:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarComboBox(cmbTipoCliente);
-        panel.add(cmbTipoCliente, gbc);
-
-        // Fila 2: Correo y Celular
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("📧 Correo Electrónico:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtCorreo);
-        panel.add(txtCorreo, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("📱 Celular:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarTextField(txtCelular);
-        panel.add(txtCelular, gbc);
-
-        // Fila 3: Contraseña
-        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0;
-        panel.add(crearLabel("🔐 Contraseña:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarPasswordField(txtContrasena);
-        panel.add(txtContrasena, gbc);
-
-        return panel;
-    }
-
-    private JPanel crearPanelPersona() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(COLOR_BLANCO);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(COLOR_EXITO, 2, true),
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(4, 12, 8, 12),
-                        BorderFactory.createEmptyBorder(0, 0, 0, 0)
-                )
-        ));
-
-        // Título
-        GridBagConstraints gbcTitulo = new GridBagConstraints();
-        gbcTitulo.gridx = 0;
-        gbcTitulo.gridy = 0;
-        gbcTitulo.gridwidth = 4;
-        gbcTitulo.insets = new Insets(4, 0, 8, 0);
-        gbcTitulo.anchor = GridBagConstraints.WEST;
-
-        JLabel lblTituloPanel = new JLabel("👤 INFORMACIÓN PERSONAL");
-        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblTituloPanel.setForeground(COLOR_EXITO);
-        panel.add(lblTituloPanel, gbcTitulo);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 6, 5, 6);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Fila 1: Nombre y Apellidos
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0;
-        panel.add(crearLabel("Nombres:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtNombre);
-        panel.add(txtNombre, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("Apellidos:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarTextField(txtApellidos);
-        panel.add(txtApellidos, gbc);
-
-        // Fila 2: Tipo Doc y Num Doc
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("Tipo Documento:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtTipoDoc);
-        panel.add(txtTipoDoc, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("Nro. Documento:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarTextField(txtNumDoc);
-        panel.add(txtNumDoc, gbc);
-
-        // Fila 3: Profesión y Dirección
-        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0;
-        panel.add(crearLabel("💼 Profesión:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtProfesion);
-        panel.add(txtProfesion, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("🏠 Dirección:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarTextField(txtDireccion);
-        panel.add(txtDireccion, gbc);
-
-        return panel;
-    }
-
-    private JPanel crearPanelEmpresa() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(COLOR_BLANCO);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(COLOR_INFO, 2, true),
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(4, 12, 8, 12),
-                        BorderFactory.createEmptyBorder(0, 0, 0, 0)
-                )
-        ));
-
-        // Título
-        GridBagConstraints gbcTitulo = new GridBagConstraints();
-        gbcTitulo.gridx = 0;
-        gbcTitulo.gridy = 0;
-        gbcTitulo.gridwidth = 4;
-        gbcTitulo.insets = new Insets(4, 0, 8, 0);
-        gbcTitulo.anchor = GridBagConstraints.WEST;
-
-        JLabel lblTituloPanel = new JLabel("🏢 INFORMACIÓN EMPRESARIAL");
-        lblTituloPanel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblTituloPanel.setForeground(COLOR_INFO);
-        panel.add(lblTituloPanel, gbcTitulo);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 6, 5, 6);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Fila 1: Razón Social y Tipo Empresa
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0;
-        panel.add(crearLabel("Razón Social:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtRazonSocial);
-        panel.add(txtRazonSocial, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("Tipo de Empresa:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarTextField(txtTipoEmpresa);
-        panel.add(txtTipoEmpresa, gbc);
-
-        // Fila 2: RUC y Dirección
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("📝 RUC:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.3;
-        estilizarTextField(txtRuc);
-        panel.add(txtRuc, gbc);
-
-        gbc.gridx = 2; gbc.weightx = 0.0;
-        panel.add(crearLabel("🏠 Dirección:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.3;
-        estilizarTextField(txtDireccion);
-        panel.add(txtDireccion, gbc);
-
-        return panel;
-    }
-
-    private JPanel crearPanelTabla() {
-        JPanel panel = new JPanel(new BorderLayout(0, 8));
-        panel.setBackground(COLOR_FONDO);
-
-        // Título de la sección
-        JLabel lblTitulo = new JLabel("📊 REGISTRO DE CLIENTES", SwingConstants.LEFT);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblTitulo.setForeground(COLOR_SECUNDARIO);
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-        panel.add(lblTitulo, BorderLayout.NORTH);
-
-        // Configurar tabla
-        String[] columnas = {"ID", "Tipo", "Nombre/Razón Social", "Doc/RUC", "Correo", "Celular", "Dirección"};
-        modeloTabla = new DefaultTableModel(columnas, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        tblClientes.setModel(modeloTabla);
-        tblClientes.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        tblClientes.setRowHeight(28);
-        tblClientes.setShowGrid(true);
-        tblClientes.setGridColor(new Color(222, 226, 230));
-        tblClientes.setIntercellSpacing(new Dimension(1, 1));
-        tblClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblClientes.setSelectionBackground(new Color(255, 193, 7, 120));
-        tblClientes.setSelectionForeground(COLOR_SECUNDARIO);
-
-        // Estilizar header
-        JTableHeader header = tblClientes.getTableHeader();
-        header.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        header.setBackground(COLOR_TABLA_HEADER);
-        header.setForeground(COLOR_BLANCO);
-        header.setPreferredSize(new Dimension(header.getWidth(), 35));
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, COLOR_PRINCIPAL));
-
-        // Centrar contenido de celdas
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < tblClientes.getColumnCount(); i++) {
-            tblClientes.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        // Colores alternados en filas
-        tblClientes.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (isSelected) {
-                    c.setBackground(new Color(255, 193, 7, 120));
-                    c.setForeground(COLOR_SECUNDARIO);
-                    setFont(getFont().deriveFont(Font.BOLD));
-                } else {
-                    c.setBackground(row % 2 == 0 ? COLOR_BLANCO : new Color(248, 249, 250));
-                    c.setForeground(COLOR_SECUNDARIO);
-                    setFont(new Font("Segoe UI", Font.PLAIN, 12));
-                }
-                ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
-                return c;
-            }
-        });
-
-        JScrollPane scrollPane = new JScrollPane(tblClientes);
-        scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 212, 218), 2),
-                BorderFactory.createEmptyBorder(0, 0, 0, 0)
-        ));
-        scrollPane.getViewport().setBackground(COLOR_BLANCO);
-
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        return panel;
-    }
-
-    private JPanel crearPanelBotones() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 12));
-        panel.setBackground(COLOR_BLANCO);
-        panel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(222, 226, 230)));
-
-        // Estilizar botones
-        estilizarBoton(btnAgregar, COLOR_EXITO, new Color(33, 136, 56));
-        estilizarBoton(btnActualizar, COLOR_INFO, new Color(0, 105, 217));
-        estilizarBoton(btnEliminar, COLOR_PELIGRO, new Color(200, 35, 51));
-        estilizarBoton(btnLimpiar, COLOR_SECUNDARIO, new Color(40, 45, 50));
-        estilizarBoton(btnMenu, new Color(108, 117, 125), new Color(73, 80, 87));
-
-        panel.add(btnAgregar);
-        panel.add(btnActualizar);
-        panel.add(btnEliminar);
-        panel.add(btnLimpiar);
-        panel.add(btnMenu);
-
-        return panel;
-    }
+    // === MÉTODOS DE ESTILIZACIÓN ===
 
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        label.setForeground(COLOR_SECUNDARIO);
+        label.setFont(FUENTE_LABEL);
+        label.setForeground(COLOR_TEXTO);
         return label;
     }
 
-    private void estilizarTextField(JTextField textField) {
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+    private void estilizarCampo(JTextField campo) {
+        campo.setFont(FUENTE_CAMPO);
+        campo.setForeground(COLOR_TEXTO);
+        campo.setPreferredSize(new Dimension(0, 28));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(189, 195, 199), 1, true),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)
         ));
-        textField.setBackground(COLOR_BLANCO);
-
-        // Efecto focus
-        textField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                textField.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(COLOR_PRINCIPAL, 2),
-                        BorderFactory.createEmptyBorder(4, 9, 4, 9)
-                ));
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                textField.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                        BorderFactory.createEmptyBorder(5, 10, 5, 10)
-                ));
-            }
-        });
+        campo.setCaretColor(COLOR_PRIMARIO);
     }
 
-    private void estilizarPasswordField(JPasswordField passwordField) {
-        passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        passwordField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+    private void estilizarComboBox(JComboBox<String> combo) {
+        combo.setFont(FUENTE_CAMPO);
+        combo.setForeground(COLOR_TEXTO);
+        combo.setBackground(Color.WHITE);
+        combo.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(189, 195, 199), 1, true),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
-        passwordField.setBackground(COLOR_BLANCO);
-
-        // Efecto focus
-        passwordField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                passwordField.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(COLOR_PRINCIPAL, 2),
-                        BorderFactory.createEmptyBorder(4, 9, 4, 9)
-                ));
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                passwordField.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                        BorderFactory.createEmptyBorder(5, 10, 5, 10)
-                ));
-            }
-        });
     }
 
-    private void estilizarComboBox(JComboBox<String> comboBox) {
-        comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        comboBox.setBackground(COLOR_BLANCO);
-        comboBox.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
-                BorderFactory.createEmptyBorder(4, 10, 4, 10)
-        ));
-        comboBox.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private Border crearBordeTitulado(String titulo) {
+        TitledBorder border = BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(COLOR_PRIMARIO, 1, true),
+                titulo
+        );
+        border.setTitleFont(FUENTE_TITULO);
+        border.setTitleColor(COLOR_PRIMARIO);
+        return BorderFactory.createCompoundBorder(
+                border,
+                BorderFactory.createEmptyBorder(5, 10, 8, 10)
+        );
     }
 
-    private void estilizarBoton(JButton boton, Color color, Color colorHover) {
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        boton.setBackground(color);
-        boton.setForeground(COLOR_BLANCO);
+    private JButton crearBoton(String texto, Color colorBase) {
+        JButton boton = new JButton(texto);
+        boton.setFont(FUENTE_BOTON);
+        boton.setForeground(Color.WHITE);
+        boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setBorderPainted(false);
-        boton.setBorder(BorderFactory.createEmptyBorder(10, 24, 10, 24));
+        boton.setPreferredSize(new Dimension(100, 32));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        boton.setOpaque(true);
 
         // Efecto hover
         boton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                boton.setBackground(colorHover);
+                boton.setBackground(colorBase.darker());
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                boton.setBackground(color);
+                boton.setBackground(colorBase);
             }
         });
+
+        return boton;
     }
 
+    private void estilizarTabla(JTable tabla) {
+        tabla.setFont(FUENTE_TABLA);
+        tabla.setForeground(COLOR_TEXTO);
+        tabla.setBackground(COLOR_PANEL);
+        tabla.setSelectionBackground(COLOR_PRIMARIO);
+        tabla.setSelectionForeground(Color.WHITE);
+        tabla.setRowHeight(28);
+        tabla.setGridColor(new Color(220, 220, 220));
+        tabla.setShowGrid(true);
+        tabla.setIntercellSpacing(new Dimension(1, 1));
+
+        // Estilo del encabezado
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        header.setBackground(COLOR_SECUNDARIO);
+        header.setForeground(Color.WHITE);
+        header.setPreferredSize(new Dimension(header.getWidth(), 32));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, COLOR_PRIMARIO));
+    }
+
+    // === Mostrar el panel correcto según el tipo seleccionado ===
     private void configurarEventos() {
-        // Cambiar panel según tipo de cliente seleccionado
+        // Cambiar panel dinámico
         cmbTipoCliente.addActionListener(e -> {
             String tipo = (String) cmbTipoCliente.getSelectedItem();
-            cardLayout.show(panelDinamico, tipo);
-            limpiarCamposEspecificos();
+            cardLayout.show(panelDinamico, tipo.equals("persona") ? "persona" : "empresa");
         });
 
-        // Evento para volver al menú principal
-        btnMenu.addActionListener(e -> {
-            this.dispose();
-            new MainMenuView().setVisible(true);
-        });
+        // === BOTÓN LISTAR ===
+        btnListar.addActionListener(e -> cargarTabla());
+
+        // === BOTÓN LIMPIAR ===
+        btnLimpiar.addActionListener(e -> limpiarCampos());
     }
 
-    private void limpiarCamposEspecificos() {
-        // Limpiar campos específicos al cambiar tipo de cliente
+    private void cargarTabla() {
+        List<Cliente> lista = clienteService.listarClientes();
+
+        DefaultTableModel modelo = (DefaultTableModel) tblClientes.getModel();
+        modelo.setRowCount(0);
+
+        for (Cliente c : lista) {
+            modelo.addRow(new Object[]{
+                    c.getId(),
+                    c.getTipo_cliente(),
+                    c.getTipo_cliente().equals("persona") ?
+                            c.getNombre() + " " + c.getApellidos() :
+                            c.getRazon_social(),
+                    c.getTipo_cliente().equals("persona") ?
+                            c.getNumero_documento() :
+                            c.getRuc(),
+                    c.getCorreo(),
+                    c.getCelular(),
+                    c.getDireccion()
+            });
+        }
+    }
+
+    private void limpiarCampos() {
+        txtId.setText("");
+        txtCorreo.setText("");
+        txtCelular.setText("");
+        txtContrasena.setText("");
         txtNombre.setText("");
         txtApellidos.setText("");
+        txtDireccion.setText("");
         txtTipoDoc.setText("");
         txtNumDoc.setText("");
         txtProfesion.setText("");
         txtRazonSocial.setText("");
         txtTipoEmpresa.setText("");
         txtRuc.setText("");
-        txtDireccion.setText("");
-    }
-
-    public static void main(String[] args) {
-        // Configurar Look and Feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            FrmCliente vista = new FrmCliente();
-            ClienteService servicio = new ClienteService();
-            ClienteController controlador = new ClienteController(vista, servicio);
-            controlador.iniciar();
-        });
     }
 }
+

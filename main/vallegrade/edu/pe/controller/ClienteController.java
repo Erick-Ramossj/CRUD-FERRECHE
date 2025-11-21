@@ -36,6 +36,10 @@ public class ClienteController implements ActionListener {
         this.vista.btnActualizar.addActionListener(this);
         this.vista.btnEliminar.addActionListener(this);
         this.vista.btnLimpiar.addActionListener(this);
+        this.vista.btnListar.addActionListener(this);
+
+
+
 
         // Registrar listener para la tabla (para seleccionar una fila)
         this.vista.tblClientes.addMouseListener(new MouseAdapter() {
@@ -66,7 +70,10 @@ public class ClienteController implements ActionListener {
             eliminarCliente();
         } else if (e.getSource() == vista.btnLimpiar) {
             limpiarCampos();
+        }else if (e.getSource() == vista.btnListar) {
+            listarClientes();
         }
+
     }
 
     private void listarClientes() {
