@@ -227,16 +227,4 @@ public class MainMenuView extends JFrame {
         new FrmDireccion(this, 0).setVisible(true);
     }
 
-    // =============== MAIN ===============
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            new MainMenuView().setVisible(true);
-        });
-    }
 }
