@@ -90,7 +90,7 @@ public class MainMenuView extends JFrame {
 
         JPanel cardCategorias = crearCard(
                 "📁",
-                "GESTIÓN DE CATEGORÍAS",
+                "GESTIÓN DE Direccion",
                 "Organizar productos por categorías",
                 COLOR_CATEGORIAS
         );
@@ -129,7 +129,7 @@ public class MainMenuView extends JFrame {
 
         cardCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mostrarEnDesarrollo();
+                abrirDireccion();
             }
         });
     }
@@ -221,14 +221,10 @@ public class MainMenuView extends JFrame {
         new FrmCliente().setVisible(true);
     }
 
-    private void mostrarEnDesarrollo() {
-        JOptionPane.showMessageDialog(
-                this,
-                "El módulo de Categorías está en desarrollo.\n" +
-                        "Próximamente estará disponible.",
-                "Módulo en Desarrollo",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+    private void abrirDireccion() {
+        this.dispose();
+        // CORRECCIÓN: uso del constructor correcto
+        new FrmDireccion(this, 0).setVisible(true);
     }
 
     // =============== MAIN ===============
