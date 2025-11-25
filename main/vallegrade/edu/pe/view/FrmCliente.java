@@ -13,7 +13,7 @@ public class FrmCliente extends JFrame {
 
     // === Componentes principales ===
     public JTable tblClientes;
-    public JButton btnAgregar, btnActualizar, btnEliminar, btnLimpiar, btnListar;
+    public JButton btnAgregar, btnActualizar, btnEliminar, btnLimpiar, btnListar, btnVolver;
     public JComboBox<String> cmbTipoCliente;
 
     // === Campos comunes ===
@@ -266,12 +266,14 @@ public class FrmCliente extends JFrame {
         btnEliminar = crearBoton("Eliminar", COLOR_PELIGRO);
         btnLimpiar = crearBoton("Limpiar", COLOR_ADVERTENCIA);
         btnListar = crearBoton("Listar", new Color(149, 165, 166));
+        btnVolver = crearBoton("Volver", new Color(127, 140, 141));
 
         panelBotones.add(btnAgregar);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnListar);
+        panelBotones.add(btnVolver);
 
         add(panelBotones, BorderLayout.SOUTH);
     }
@@ -462,6 +464,16 @@ public class FrmCliente extends JFrame {
                     txtDireccion.setText(tblClientes.getValueAt(fila, 6) != null ? tblClientes.getValueAt(fila, 6).toString() : "");
                 }
             }
+        });
+        // === BOTÓN VOLVER ===
+        btnVolver.addActionListener(e -> {
+            // 1. Cerrar la ventana actual (FrmCliente)
+            this.dispose();
+
+            // 2. Abrir el menú principal
+            // Asegúrate de que MainMenuView sea el nombre exacto de tu clase
+            MainMenuView menu = new MainMenuView();
+            menu.setVisible(true);
         });
     }
 
