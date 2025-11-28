@@ -17,6 +17,7 @@ public class FrmProducto extends JFrame {
 
     private JTextField txtId, txtNombre, txtPrecio, txtDescuento, txtImagen;
     private JComboBox<String> cboGenero, cboColor, cboRubro;
+    private JTextArea txtDescripcion;
     private JTable tabla;
     private DefaultTableModel modelo;
 
@@ -57,7 +58,7 @@ public class FrmProducto extends JFrame {
         headerPanel.add(lblTitulo);
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // ------------------- PANEL FORMULARIO -------------------
+        // ------------------- FORMULARIO -------------------
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(COLOR_WHITE);
         formPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -79,7 +80,19 @@ public class FrmProducto extends JFrame {
         cboColor = crearComboBox();
         cboRubro = crearComboBox();
 
-        // Fila 1
+        // Campo descripción
+        txtDescripcion = new JTextArea(3, 20);
+        txtDescripcion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtDescripcion.setLineWrap(true);
+        txtDescripcion.setWrapStyleWord(true);
+        txtDescripcion.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+                new EmptyBorder(5, 10, 5, 10)
+        ));
+        JScrollPane scrollDesc = new JScrollPane(txtDescripcion);
+        scrollDesc.setPreferredSize(new Dimension(200, 70));
+
+        // FILA 1
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.2;
         formPanel.add(crearLabel("ID:"), gbc);
         gbc.gridx = 1; gbc.weightx = 0.8;
@@ -90,44 +103,51 @@ public class FrmProducto extends JFrame {
         gbc.gridx = 3; gbc.weightx = 0.8;
         formPanel.add(txtNombre, gbc);
 
-        // Fila 2
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.2;
+        // FILA 2
+        gbc.gridx = 0; gbc.gridy = 1;
         formPanel.add(crearLabel("Precio:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
+        gbc.gridx = 1;
         formPanel.add(txtPrecio, gbc);
 
-        gbc.gridx = 2; gbc.weightx = 0.2;
+        gbc.gridx = 2;
         formPanel.add(crearLabel("Oferta:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.8;
+        gbc.gridx = 3;
         formPanel.add(txtDescuento, gbc);
 
-        // Fila 3
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.2;
+        // FILA 3
+        gbc.gridx = 0; gbc.gridy = 2;
         formPanel.add(crearLabel("Género:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
+        gbc.gridx = 1;
         formPanel.add(cboGenero, gbc);
 
-        gbc.gridx = 2; gbc.weightx = 0.2;
+        gbc.gridx = 2;
         formPanel.add(crearLabel("Color:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.8;
+        gbc.gridx = 3;
         formPanel.add(cboColor, gbc);
 
-        // Fila 4
-        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.2;
+        // FILA 4
+        gbc.gridx = 0; gbc.gridy = 3;
         formPanel.add(crearLabel("Rubro:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
+        gbc.gridx = 1;
         formPanel.add(cboRubro, gbc);
 
-        gbc.gridx = 2; gbc.weightx = 0.2;
+        gbc.gridx = 2;
         formPanel.add(crearLabel("Imagen:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 0.8;
+        gbc.gridx = 3;
         formPanel.add(txtImagen, gbc);
+
+        // FILA 5 - Descripción
+        gbc.gridx = 0; gbc.gridy = 4;
+        formPanel.add(crearLabel("Descripción:"), gbc);
+        gbc.gridx = 1; gbc.gridwidth = 3;
+        formPanel.add(scrollDesc, gbc);
+        gbc.gridwidth = 1;
 
         mainPanel.add(formPanel, BorderLayout.NORTH);
 
         // ------------------- TABLA -------------------
         modelo = new DefaultTableModel(
-                new String[]{"ID", "Nombre", "Precio", "Oferta", "Imagen", "Género", "Color", "Rubro"}, 0
+                new String[]{"ID", "Nombre", "Precio", "Oferta", "Imagen", "Género", "Color", "Rubro", "Descripción"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -142,16 +162,13 @@ public class FrmProducto extends JFrame {
         tabla.setSelectionForeground(COLOR_WHITE);
         tabla.setGridColor(new Color(189, 195, 199));
         tabla.setShowGrid(true);
-        tabla.setIntercellSpacing(new Dimension(1, 1));
 
-        // Estilo del encabezado
         JTableHeader header = tabla.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
         header.setBackground(COLOR_BACKGROUND);
         header.setForeground(COLOR_PRIMARY);
         header.setPreferredSize(new Dimension(header.getWidth(), 40));
 
-        // Centrar contenido de celdas
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 0; i < tabla.getColumnCount(); i++) {
@@ -195,7 +212,7 @@ public class FrmProducto extends JFrame {
         });
     }
 
-    // ------------------- MÉTODOS AUXILIARES DE DISEÑO -------------------
+    // ------------------- COMPONENTES DE DISEÑO -------------------
 
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto);
@@ -237,7 +254,6 @@ public class FrmProducto extends JFrame {
         boton.setPreferredSize(new Dimension(150, 40));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Efecto hover
         boton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 boton.setBackground(color.darker());
@@ -250,7 +266,7 @@ public class FrmProducto extends JFrame {
         return boton;
     }
 
-    // ------------------- LÓGICA (SIN CAMBIOS) -------------------
+    // ------------------- LÓGICA -------------------
 
     private void cargarCombos() {
         cboGenero.addItem("Unisex");
@@ -282,7 +298,8 @@ public class FrmProducto extends JFrame {
                     p.getImage(),
                     p.getGenero(),
                     p.getColor(),
-                    p.getRubro()
+                    p.getRubro(),
+                    p.getDescription()
             });
         }
     }
@@ -299,6 +316,8 @@ public class FrmProducto extends JFrame {
             cboGenero.setSelectedItem(tabla.getValueAt(fila, 5).toString());
             cboColor.setSelectedItem(tabla.getValueAt(fila, 6).toString());
             cboRubro.setSelectedItem(tabla.getValueAt(fila, 7).toString());
+
+            txtDescripcion.setText(tabla.getValueAt(fila, 8).toString());
         }
     }
 
@@ -350,6 +369,7 @@ public class FrmProducto extends JFrame {
         p.setGenero(cboGenero.getSelectedItem().toString());
         p.setColor(cboColor.getSelectedItem().toString());
         p.setRubro(cboRubro.getSelectedItem().toString());
+        p.setDescription(txtDescripcion.getText());
         return p;
     }
 
@@ -358,6 +378,7 @@ public class FrmProducto extends JFrame {
         txtPrecio.setEditable(true);
         txtDescuento.setEditable(true);
         txtImagen.setEditable(true);
+        txtDescripcion.setEditable(true);
 
         cboGenero.setEnabled(true);
         cboColor.setEnabled(true);
@@ -372,6 +393,7 @@ public class FrmProducto extends JFrame {
         txtPrecio.setText("");
         txtDescuento.setText("");
         txtImagen.setText("");
+        txtDescripcion.setText("");
 
         cboGenero.setSelectedIndex(0);
         cboColor.setSelectedIndex(0);

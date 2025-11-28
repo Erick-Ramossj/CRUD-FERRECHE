@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBD {
-    private static final String URL = "jdbc:mysql://database-1.cm2ob0olohnz.us-east-1.rds.amazonaws.com/ferreche";
+    private static final String URL = "jdbc:mysql://database-crudfe.ce85czpa3slf.us-east-1.rds.amazonaws.com/ferreche";
     private static final String USER = "admin";
-    private static final String PASSWORD = "admin_1234_";
+    private static final String PASSWORD = "luci123fe";
 
     /**
      * Intenta conectar a la base de datos.
