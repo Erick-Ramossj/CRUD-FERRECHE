@@ -1,16 +1,13 @@
 package vallegrade.edu.pe.view;
 
-import vallegrade.edu.pe.controller.DireccionController;
-
+import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.border.*;
-import java.awt.*;
+import vallegrade.edu.pe.controller.DireccionController;
 
 public class FrmDireccion extends JDialog {
-
-    private final int idCliente;
 
     public JTable tblDirecciones;
     public DefaultTableModel modeloTabla;
@@ -46,11 +43,10 @@ public class FrmDireccion extends JDialog {
     private final Font FUENTE_CAMPO = new Font("Segoe UI", Font.PLAIN, 13);
     private final Font FUENTE_BOTON = new Font("Segoe UI", Font.BOLD, 12);
 
-    public FrmDireccion(JFrame parent, int idCliente) {
-        super(parent, true);
-        this.idCliente = idCliente;
+    public FrmDireccion(JFrame parent) {
+        super(parent, true); // true indica que es MODAL (bloquea la ventana de atrás)
 
-        setTitle("Gestión de Direcciones - Cliente ID: " + idCliente);
+        setTitle("Gestión de Direcciones");
         setSize(1000, 700);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
@@ -59,7 +55,7 @@ public class FrmDireccion extends JDialog {
         inicializarComponentes();
 
         // Inicializar controlador
-        new DireccionController(this, idCliente).iniciar();
+        new DireccionController(this).iniciar();
     }
 
     private void inicializarComponentes() {
@@ -67,13 +63,13 @@ public class FrmDireccion extends JDialog {
         JPanel panelSuperior = new JPanel(new BorderLayout(0, 5));
         panelSuperior.setBackground(COLOR_FONDO);
         panelSuperior.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+
         JPanel panelEncabezado = crearPanelEncabezado();
         JPanel panelForm = crearPanelFormulario();
-        
+
         panelSuperior.add(panelEncabezado, BorderLayout.NORTH);
         panelSuperior.add(panelForm, BorderLayout.CENTER);
-        
+
         add(panelSuperior, BorderLayout.NORTH);
 
         // Panel central: tabla
@@ -91,7 +87,7 @@ public class FrmDireccion extends JDialog {
         panel.setPreferredSize(new Dimension(0, 45));
         panel.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
 
-        JLabel lblTitulo = new JLabel("Gestión de Direcciones - Cliente ID: " + idCliente);
+        JLabel lblTitulo = new JLabel("Gestión de Direcciones");
         lblTitulo.setFont(FUENTE_TITULO);
         lblTitulo.setForeground(Color.WHITE);
 
@@ -211,7 +207,14 @@ public class FrmDireccion extends JDialog {
         panel.add(btnVolver);
 
         btnLimpiar.addActionListener(e -> limpiarCampos());
-        btnVolver.addActionListener(e -> volverAlMenu());
+
+        // --- AQUÍ ESTÁ EL CAMBIO ---
+        // Al dar clic en Volver, simplemente cerramos la ventana (dispose).
+        // Como es un JDialog modal, la ventana padre (MainMenu) que estaba "congelada" detrás
+        // volverá a estar activa automáticamente. No creamos un "new MainMenuView()".
+        btnVolver.addActionListener(e -> {
+            dispose();
+        });
 
         return panel;
     }
@@ -299,13 +302,5 @@ public class FrmDireccion extends JDialog {
         txtDepartamento.setText("");
         txtReferencia.setText("");
         chkEsPrincipal.setSelected(false);
-    }
-
-    public int getIdCliente() { 
-        return idCliente; 
-    }
-
-    private void volverAlMenu() {
-        this.dispose();
     }
 }
