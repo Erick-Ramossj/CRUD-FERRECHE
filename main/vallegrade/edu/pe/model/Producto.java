@@ -5,17 +5,18 @@ public class Producto {
     private int id;
     private String name;
     private double price;
-    private double discount_price;
+    private Double discount_price; // <-- Wrapper para permitir NULL
     private String image;
-    private String genero;
     private String color;
+    private String genero;
     private String rubro;
+    private String description;  // <-- CORREGIDO para coincidir con la BD
 
     public Producto() {
     }
 
-    public Producto(int id, String name, double price, double discount_price, String image,
-                    String genero, String color, String rubro) {
+    public Producto(int id, String name, double price, Double discount_price, String image,
+                    String genero, String color, String rubro, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -24,6 +25,7 @@ public class Producto {
         this.genero = genero;
         this.color = color;
         this.rubro = rubro;
+        this.description = description;
     }
 
     // -------- ID --------
@@ -54,11 +56,11 @@ public class Producto {
     }
 
     // -------- DISCOUNT PRICE --------
-    public double getDiscount_price() {
+    public Double getDiscount_price() {
         return discount_price;
     }
 
-    public void setDiscount_price(double discount_price) {
+    public void setDiscount_price(Double discount_price) {
         this.discount_price = discount_price;
     }
 
@@ -96,5 +98,14 @@ public class Producto {
 
     public void setRubro(String rubro) {
         this.rubro = rubro;
+    }
+
+    // -------- DESCRIPTION --------
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -8,23 +8,25 @@ import java.util.List;
 
 public class ProductoDAO {
 
-    // CONSULTAS SQL
+    // CONSULTAS SQL CORRECTAS
     private static final String SQL_SELECT =
-            "SELECT id, name, price, discount_price, image, color, genero, rubro FROM productos";
+            "SELECT id, name, price, discount_price, image, color, genero, rubro, description FROM productos";
 
     private static final String SQL_SELECT_BY_ID =
-            "SELECT id, name, price, discount_price, image, color, genero, rubro FROM productos WHERE id = ?";
+            "SELECT id, name, price, discount_price, image, color, genero, rubro, description FROM productos WHERE id = ?";
 
     private static final String SQL_INSERT =
-            "INSERT INTO productos (name, price, discount_price, image, color, genero, rubro) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO productos (name, price, discount_price, image, color, genero, rubro, description) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_UPDATE =
-            "UPDATE productos SET name = ?, price = ?, discount_price = ?, image = ?, color = ?, genero = ?, rubro = ? WHERE id = ?";
+            "UPDATE productos SET name=?, price=?, discount_price=?, image=?, color=?, genero=?, rubro=?, description=? WHERE id=?";
 
     private static final String SQL_DELETE =
             "DELETE FROM productos WHERE id = ?";
 
-    // ▶ LISTAR TODOS
+
+    // LISTAR TODOS
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
 
@@ -39,21 +41,23 @@ public class ProductoDAO {
                         rs.getDouble("price"),
                         rs.getDouble("discount_price"),
                         rs.getString("image"),
-                        rs.getString("genero"),
                         rs.getString("color"),
-                        rs.getString("rubro")
+                        rs.getString("genero"),
+                        rs.getString("rubro"),
+                        rs.getString("description")
                 );
+
                 lista.add(p);
             }
 
-        } catch (SQLException | ClassNotFoundException e) {   // ← CORREGIDO
+        } catch (Exception e) {
             System.err.println("ERROR en listar(): " + e.getMessage());
         }
 
         return lista;
     }
 
-    // ▶ INSERTAR
+    // INSERTAR
     public boolean agregar(Producto p) {
         try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(SQL_INSERT)) {
@@ -65,17 +69,18 @@ public class ProductoDAO {
             ps.setString(5, p.getColor());
             ps.setString(6, p.getGenero());
             ps.setString(7, p.getRubro());
+            ps.setString(8, p.getDescription());
 
             ps.executeUpdate();
             return true;
 
-        } catch (SQLException | ClassNotFoundException e) {   // ← CORREGIDO
+        } catch (Exception e) {
             System.err.println("ERROR en agregar(): " + e.getMessage());
             return false;
         }
     }
 
-    // ▶ ACTUALIZAR
+    // ACTUALIZAR
     public boolean actualizar(Producto p) {
         try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(SQL_UPDATE)) {
@@ -87,18 +92,19 @@ public class ProductoDAO {
             ps.setString(5, p.getColor());
             ps.setString(6, p.getGenero());
             ps.setString(7, p.getRubro());
-            ps.setInt(8, p.getId());
+            ps.setString(8, p.getDescription());
+            ps.setInt(9, p.getId());
 
             ps.executeUpdate();
             return true;
 
-        } catch (SQLException | ClassNotFoundException e) {   // ← CORREGIDO
+        } catch (Exception e) {
             System.err.println("ERROR en actualizar(): " + e.getMessage());
             return false;
         }
     }
 
-    // ▶ ELIMINAR
+    // ELIMINAR
     public boolean eliminar(int id) {
         try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(SQL_DELETE)) {
@@ -107,13 +113,13 @@ public class ProductoDAO {
             ps.executeUpdate();
             return true;
 
-        } catch (SQLException | ClassNotFoundException e) {   // ← CORREGIDO
+        } catch (Exception e) {
             System.err.println("ERROR en eliminar(): " + e.getMessage());
             return false;
         }
     }
 
-    // ▶ BUSCAR POR ID
+    // BUSCAR POR ID
     public Producto buscarPorId(int id) {
         try (Connection con = ConexionBD.conectar();
              PreparedStatement ps = con.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -128,13 +134,14 @@ public class ProductoDAO {
                         rs.getDouble("price"),
                         rs.getDouble("discount_price"),
                         rs.getString("image"),
-                        rs.getString("genero"),
                         rs.getString("color"),
-                        rs.getString("rubro")
+                        rs.getString("genero"),
+                        rs.getString("rubro"),
+                        rs.getString("description")
                 );
             }
 
-        } catch (SQLException | ClassNotFoundException e) {   // ← CORREGIDO
+        } catch (Exception e) {
             System.err.println("ERROR en buscarPorId(): " + e.getMessage());
         }
 
