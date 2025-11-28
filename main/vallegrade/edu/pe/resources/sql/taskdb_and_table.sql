@@ -40,7 +40,6 @@ CREATE TABLE productos (
 
 CREATE TABLE direcciones (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT NOT NULL,
     calle VARCHAR(100) NOT NULL,
     numero VARCHAR(20),
     distrito VARCHAR(50) NOT NULL,
@@ -48,5 +47,5 @@ CREATE TABLE direcciones (
     departamento VARCHAR(50) NOT NULL,
     referencia VARCHAR(255),
     es_principal BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (id_cliente) REFERENCES clientes(id)
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
