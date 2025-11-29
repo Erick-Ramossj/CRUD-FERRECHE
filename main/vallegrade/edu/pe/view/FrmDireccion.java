@@ -43,8 +43,8 @@ public class FrmDireccion extends JDialog {
     private final Font FUENTE_CAMPO = new Font("Segoe UI", Font.PLAIN, 13);
     private final Font FUENTE_BOTON = new Font("Segoe UI", Font.BOLD, 12);
 
-    public FrmDireccion(JFrame parent) {
-        super(parent, true); // true indica que es MODAL (bloquea la ventana de atrás)
+    public FrmDireccion(JFrame parent, int idCliente) {
+        super(parent, true); // modal
 
         setTitle("Gestión de Direcciones");
         setSize(1000, 700);
@@ -54,9 +54,10 @@ public class FrmDireccion extends JDialog {
 
         inicializarComponentes();
 
-        // Inicializar controlador
-        new DireccionController(this).iniciar();
+        // Inicializar controlador pasando el idCliente
+        new DireccionController(this, idCliente).iniciar();
     }
+
 
     private void inicializarComponentes() {
         // Panel superior: encabezado + formulario
